@@ -1,0 +1,9 @@
+{
+	"endpos":"3:0",
+	"flags":0,
+	"ident":"stdlib_algorithms_2cryptography_2hashing_2hashing",
+	"imports":["md5.monkey2","sha1.monkey2","sha256.monkey2"],
+	"kind":"file",
+	"namespace":"stdlib.crypto.hashing",
+	"srcpos":"1:0"
+}

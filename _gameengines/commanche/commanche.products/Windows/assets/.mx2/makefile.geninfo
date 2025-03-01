@@ -1,0 +1,9 @@
+{
+	"endpos":"3:0",
+	"flags":0,
+	"ident":"stdlib_plugins_2makefile",
+	"imports":["libc/libc.monkey2","zlib/zlib.monkey2","miniz/miniz.monkey2","jni/jni.monkey2","sdl2/sdl2.monkey2","stb/stb.monkey2","miniaudio/miniaudio.monkey2"],
+	"kind":"file",
+	"namespace":"stdlib.plugins",
+	"srcpos":"1:0"
+}

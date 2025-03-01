@@ -1,0 +1,9 @@
+{
+	"endpos":"3:0",
+	"flags":0,
+	"ident":"stdlib_plugins_2sdl2_2makefile",
+	"imports":["makefile_windows.monkey2"],
+	"kind":"file",
+	"namespace":"stdlib.plugins.sdl2",
+	"srcpos":"1:0"
+}

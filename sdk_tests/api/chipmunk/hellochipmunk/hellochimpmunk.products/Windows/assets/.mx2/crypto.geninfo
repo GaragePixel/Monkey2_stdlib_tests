@@ -1,0 +1,9 @@
+{
+	"endpos":"3:0",
+	"flags":0,
+	"ident":"stdlib_algorithms_2cryptography_2crypto",
+	"imports":["encryption/tinyaes/tinyaes.monkey2","hashing/hashing.monkey2"],
+	"kind":"file",
+	"namespace":"stdlib.crypto",
+	"srcpos":"1:0"
+}

@@ -1,0 +1,9 @@
+{
+	"endpos":"3:0",
+	"flags":0,
+	"ident":"stdlib_plugins_2stb_2stb",
+	"imports":["stb-image/stb-image.monkey2","stb-image-write/stb-image-write.monkey2","stb-vorbis/stb-vorbis.monkey2","stb-truetype/stb-truetype.monkey2"],
+	"kind":"file",
+	"namespace":"stdlib.plugins.stb",
+	"srcpos":"1:0"
+}
