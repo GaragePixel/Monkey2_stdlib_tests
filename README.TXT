@@ -1,8 +1,7 @@
 ***** Welcome to Monkey2_stdlib_tests! *****
 
-Monkey2_stdlib_tests
-	iDkP from GaragePixel, Monkey coders and Mark Sibly
-	Please read the licence contained in the LICENCE.TXT file of this distribution.
+iDkP from GaragePixel, Monkey coders and Mark Sibly
+Please read the licence contained in the LICENCE.TXT file of this distribution.
 
 ***** This collection of programs is written for a specific language *****
 
