@@ -12,6 +12,7 @@
 		released by Mark Sibly in 2018 as a CPSM 
 		(https://en.wikipedia.org/wiki/Cross-platform_support_middleware).
 		It's general-purpose, open-source, user-friendly and cross-platform.
+		https://github.com/blitz-research/monkey2
 
 	***** Why this folder? *****
 
@@ -20,4 +21,4 @@
 		In this folder, you will be able to test stdlib and two other libraries without encountering 
 		compatibility problems.
 
-		stdlib is located at the following address:
+		stdlib is located at the following address: https://github.com/GaragePixel/stdlib-for-mx2
