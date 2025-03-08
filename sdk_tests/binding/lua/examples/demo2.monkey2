@@ -6,7 +6,6 @@
 Using stdlib.plugins.libc..
 Using stdlib.stringio
 Using sdk.binding.lua..
-Using sdk.binding.lua.api
 
 Alias lua:sdk.binding.lua
 
