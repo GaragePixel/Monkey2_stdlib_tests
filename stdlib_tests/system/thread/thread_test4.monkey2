@@ -7,27 +7,18 @@ Proof of concept for music playback in monkey2!
 Namespace myapp
 
 #Import "<stdlib>"
-#Import "<mojo>"
-'#Import "<thread>"
-'#Import "<stb-vorbis>"
+#Import "<sdk>"
+#Import "<sdk_mojo>"
 
 #Import "threads.ogg"
 
 Using stdlib..
-Using mojo..
+Using sdk_mojo..
+Using sdk..
 
 Using stdlib.plugins.libc
-Using openal
 Using stdlib.plugins.stb.vorbis
-
-#rem 
-
-	This test cannot passes because the types wanted by mojo
-	must be the type declared in std, not in stdlib. Thus, all programs using
-	mojo, mojo3d and mojox cannot work with the stdlib at the moment until these
-	later module are forked.
-
-#end 
+Using sdk.api.openal
 
 Function PlayMusic:Bool( path:String,finished:Void()=Null )
 	
