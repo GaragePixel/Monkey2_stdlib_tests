@@ -2,27 +2,18 @@
 
 Namespace test1
 
-#Import "<std>" 'Color compatible mojo, mojo3d, mojox
 #Import "<stdlib>"
-#Import "<mojo>"
-#Import "<mojo3d>"
+#Import "<sdk_mojo>"
 
-Using std.graphics
 Using stdlib..
-Using mojo..
-Using mojo3d..
+Using sdk_mojo.m2..
+Using sdk_mojo.m3..
+
+#Import "threads.ogg"
+
 
 Using stdlib.system.thread
 Alias oldColor:std.graphics.Color
-
-#rem 
-
-	This test cannot passes because the Color type wanted by mojo and mojo3d
-	must be the type declared in std, not in stdlib. Thus, all programs using
-	mojo, mojo3d and mojox cannot work with the stdlib at the moment until these
-	later module are forked.
-
-#end 
 
 #If __THREADS__
 
