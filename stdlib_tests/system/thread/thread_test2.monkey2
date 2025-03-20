@@ -2,21 +2,12 @@
 Namespace threadtest2
 
 #Import "<stdlib>"
-#Import "<mojo>"
-
-#Import "threads.jpg"
+#Import "<sdk_mojo>"
 
 Using stdlib..
-Using mojo..
+Using sdk_mojo.m2..
 
-#rem 
-
-	This test cannot passes because the types wanted by mojo
-	must be the type declared in std, not in stdlib. Thus, all programs using
-	mojo, mojo3d and mojox cannot work with the stdlib at the moment until these
-	later module are forked.
-
-#end 
+#Import "threads.jpg"
 
 Class MyWindow Extends Window
 	
