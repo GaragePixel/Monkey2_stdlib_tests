@@ -8,14 +8,9 @@ Using stdlib.system.time
 Using stdlib.math.random
 
 Function Chr:String(charCode:Int) 
-	' Convert an integer character code to a single-character string 
-	Local result:String
-	
-	' Directly append to empty string using standard ASCII value
-	result += String.FromChar(charCode)
-
-	Return result
-End 
+	' Convert an integer character code to a single-character string
+	Return String.FromChar(charCode)
+End
 
 Function RandomWord:String(minlength:UInt, maxlength:UInt)
 	Local nbCharacter:Int = Rnd(minlength,maxlength)
