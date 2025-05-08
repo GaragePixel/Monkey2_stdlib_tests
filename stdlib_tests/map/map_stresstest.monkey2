@@ -9,7 +9,6 @@ Using stdlib.math.random
 
 Function Chr:String(charCode:Int) 
 	' Convert an integer character code to a single-character string 
-	' Used for binary/character conversions in hash processing 
 	Local result:String
 	
 	' Directly append to empty string using standard ASCII value
