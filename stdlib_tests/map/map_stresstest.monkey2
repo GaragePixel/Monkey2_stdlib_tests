@@ -13,7 +13,6 @@ Function Chr:String(charCode:Int)
 	Local result:String
 	
 	' Directly append to empty string using standard ASCII value
-	' This is the idiomatic way to create a character from a code in Monkey2
 	result += String.FromChar(charCode)
 
 	Return result
