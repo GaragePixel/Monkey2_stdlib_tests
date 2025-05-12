@@ -1,4 +1,41 @@
+Namespace ListStressTestUnit
+
+#rem
+	List Set Operations - stdlib extension 1.0.0
+	Implementation: iDkP from GaragePixel
+	Date: 2025-05-12 Aida: 4.0
+
+	Set (math) operations for the standard List<T> class, providing efficient collection manipulation
+	with both in-place and copy operations. The implementation focuses on ultra performance.
+
+	These extension methods bring set theory operations to Monkey2's stdlib collections:
+
+		- Append - Combines two lists preserving all elements including duplicates (fastest)
+		- Union - Merges two lists removing duplicates (set union operation)
+		- Intersect - Creates list containing only elements present in both input lists
+		- Diff - Creates list containing elements from first list not present in second
+		- Dedup - Removes duplicate elements from a single list
+
+	Performance characteristics:
+
+		- Append: Ultra-fast pointer manipulation (25-50M elements/second)
+		- Union: Efficient hash-based deduplication (600K-1.4M elements/second)
+		- Intersect: Fast set intersection (600K-1.6M elements/second)
+		- Diff: Optimized difference operation (500K-1.1M elements/second)
+		- Dedup: Compute 100K elements in 79-148ms (25M-50M elements/second)
+
+	All operations maintain linear complexity (O(n)) regardless of collection size by
+	utilizing hash-based lookups rather than naive nested traversals.
+
+	Suggested use cases:
+		- Game development: Entity management, feature detection
+		- Data processing: Record merging, filtering, deduplication
+		- Search systems: Result combination, intersection filtering
+		- Access control: Permission calculation, exclusion filtering
+#end
+
 #Import "<stdlib>"
+
 Using stdlib.collections..
 Using stdlib.system.time..
 Using stdlib.math.random..
@@ -7,16 +44,18 @@ Class List<T> Extension
 
 	Method Dedup_oldImplementation:List<T>(onPlace:Bool=True)
 		
-		'Was my 1st implementation, it shows how new capability to cast
-		'a list into a map implicitaly as map=list, or map=list.ToMap()
-		'according the type of casting (list's items as key or value).
-		'The "normal version" is explicite, it converts the list into
-		'map's values. The implicite version is more tendious, it converts
-		'the list's values into map's key.
-		'The Dedup in the library do not use the map casting, it creates
-		'a map and iterate directly over some guards, making it 1.12x faster.
-		'This version compute 670,000 elements per seconds while the
-		'library version computes 741,000 per second.
+		' iDkP:
+		'	Was my 1st Depublication's implementation, 
+		'	it shows how new capability to cast a list 
+		'	into a map implicitaly as map=list, or map=list.ToMap()
+		'	according the type of casting (list's items as key or value).
+		'	The "normal version" is explicite, it converts the list into
+		'	map's values. The implicite version is more tendious, it converts
+		'	the list's values into map's key.
+		'	The Dedup in the library do not use the map casting, it creates
+		'	a map and iterate directly over some guards, making it 1.12x faster.
+		'	This version compute 670,000 elements per seconds while the
+		'	library version computes 741,000 per second.
 
 		Local currList:= onPlace ? Self Else Copy()
 		
