@@ -98,6 +98,7 @@ End
 Class ListAddTests
 
 	Method TestAll()
+		
 		Print("~n===============================")
 		Print("Testing Union operation...")
 		Print("===============================")
@@ -288,7 +289,7 @@ Class ListAddTests
 		
 		Print("-----------------")
 		
-		result = list3.Union(list4, False) 'DOESN'T WORKS
+		result = list3.Union(list4, False)
 		Print "Print Result"
 		For Local n:=Eachin result
 			Print n
@@ -633,6 +634,7 @@ End
 Class Bencher 
 	
 	Function CalculateElementsPerSecond:Float(elementCount:Int, timeMs:Int)
+		
 		' Guard against division by zero
 		If timeMs = 0 Then Return 0.0
 		
@@ -646,6 +648,7 @@ Class Bencher
 	End
 	
 	Function FormatThroughput:String(elementsPerSecond:Float, roundToThousands:Bool = True)
+		
 		If roundToThousands
 			' Round to nearest thousand
 			Local rounded:Int = Int(elementsPerSecond / 1000.0) * 1000
@@ -653,10 +656,11 @@ Class Bencher
 		Else
 			' Format with comma separators
 			Return Int(elementsPerSecond) + " elements/second" 
-		Endif
+		End
 	End
 	
 	Function GenerateDuplicateStrings:List<String>(size:Int, dupeRate:Float)
+		
 		' Create list with controlled duplication rate
 		Local list:= New List<String>
 		
@@ -667,7 +671,7 @@ Class Bencher
 		' Generate unique values
 		For Local i:Int = 0 Until uniqueCount
 			list.AddLast("UniqueValue" + i)
-		Next
+		End
 		
 		' Fill remaining slots with duplicates
 		While list.Count() < size
