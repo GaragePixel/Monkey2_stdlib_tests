@@ -510,9 +510,9 @@ Class ListAddTests
 	' ===================================================== Stress Tests
 
 	Method TestStressDedup()
-		Print("~n===== Stress Testing Dedup =====")
+		Print("~n===== Stress Testing =====")
 		
-		Print("~n----------------- Dedup")
+		Print("~n===== Stress Testing Append =====")
 		
 		Local sizes:Int[] = New Int[](1000, 10000, 100000)
 		Local dupeRates:Float[] = New Float[](0.25, 0.5, 0.75)
