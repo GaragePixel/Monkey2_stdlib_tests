@@ -1,39 +1,31 @@
 #Import "<stdlib>"
 Using stdlib.collections..
+Using stdlib.system.time..
+Using stdlib.math.random..
 
 Class List<T> Extension
-	
-	' We will use a special verbose version of MakeUniqueType, it's the same than the one
-	' in List, but with some console outputs for analysis purpose. Since the custom type
-	' must has implemented a to:string operator, it can works only on specific custom type
-	' so that is why the library version can really works on any custom type 
-	' and not this special version.
-	' In the test unit, you can uncomment the library version for testing. It's sets by
-	' default with the verbose version in this test unit.
 
-	Method MakeUniqueTypeVerbose:List<T>(onPlace:Bool=True) 'Added by iDkP from GaragePixel
+	Method Dedup_oldImplementation:List<T>(onPlace:Bool=True)
 		
-		' iDkP from GaragePixel
-		' 2025-05-11 - Original algorithm
-		'
-		' Special verbose method for debugging purpose
-		' Bonus: Extra code commentaries
-		' Note: 
-		'	- In this algorithm, head means "read head", that is to say the pointer 
-		'	which fixes on the last detected duplicate. 
-		'	It's not the head of the list itself, in the jargon of quasicircular lists.
-		'	- The verbose version is only for this test (not the library itself), 
-		'	because the compiler will write a version for each custom types of the library 
-		'	who do not necessarily have an operator To:String declated.
-		
+		'Was my 1st implementation, it shows how new capability to cast
+		'a list into a map implicitaly as map=list, or map=list.ToMap()
+		'according the type of casting (list's items as key or value).
+		'The "normal version" is explicite, it converts the list into
+		'map's values. The implicite version is more tendious, it converts
+		'the list's values into map's key.
+		'The Dedup in the library do not use the map casting, it creates
+		'a map and iterate directly over some guards, making it 1.12x faster.
+		'This version compute 670,000 elements per seconds while the
+		'library version computes 741,000 per second.
+
 		Local currList:= onPlace ? Self Else Copy()
 		
-		Local count:=currList.Count() '32 bits -> Updated! (we count only one time the number of items)
-		If count=1 Return currList 'We don't need to test a list of a single item
+		Local atLeastTwo:=currList.HasOneOrTwo
+		If atLeastTwo=1 Return currList
 		
-		Local firstNode:List<T>.Node=currList.FirstNode() 'Normally, the 1st item will be never removed, so we can memoirize it
+		Local firstNode:List<T>.Node=currList.FirstNode()
 
-		If count=2 'The algorithm starts to be meaningful after 2 items
+		If atLeastTwo=2
 			If firstNode.Value=firstNode.Succ.Value
 				firstNode.Succ.Remove()
 				Return currList
@@ -42,101 +34,19 @@ Class List<T> Extension
 			End 
 		End 
 
-		'Global loop
-		Local node:=firstNode 'Used to parse the list. Because FirstNode() has a guard we don't want, we call it only one time
-		Local nodeItem:=firstNode 'Current treated item
-		Local nodeToCompare:=firstNode 'Second item to compare with the current treated item
-		Local lastNode:=currList.LastNode() 'memoirize that
+		Local map:Map<T,UInt>
+		map=currList 
+		currList.Clear()
+		For Local item:=Eachin map 
+			currList.Add(item.Key)
+		End 
 		
-		'Inner loop
-		Local occurance:UInt '32 bits - count the number of duplicates in a list for the on-going treated item
-		Local actCount:=count '32 bits - active count, keep track of the number of items
-		Local lp:UInt=count+1 '32 bits - loop left, sets on the active count
-		Local comps:UInt '32 bits - used for the matching loop
-		Local op:UInt '32 bits - used for counting the deletions to perform
-		
-		'Speed up
-		Local lastHead:=lastNode '32 bits - used to stick the head on the last duplicate detected
-		Local lastCnt:UInt '32 bits - used to calculate the head from the number of programmed deletions
-
-		Repeat 'accr lp
-
-			occurance=0
-			If nodeItem.Value<>Null
-				Print "~n ==== curr item: "+nodeItem.Value+" ===="
-			Else 
-				Print "~n ==== curr item: Null (last loop) ===="
-			End 
-			nodeToCompare=firstNode
-			comps=actCount
-
-			lastCnt=0
-			Repeat 'accr nodeToCompare
-				
-				'we need to compare the node's value, where T could be from any type
-				If nodeToCompare.Value=nodeItem.Value
-					occurance+=1
-					lastHead=nodeToCompare
-					lastCnt-=1
-					Print "Found match: "+nodeToCompare.Value+" = "+nodeItem.Value+" -> new occurance: "+occurance
-				End 
-				Print "compared with: "+nodeToCompare.Value+" with occurance: "+occurance
-				
-				nodeToCompare=nodeToCompare.Succ
-				comps-=1
-				lastCnt+=1
-				
-			Until comps=0
-
-			If occurance>1
-
-				Print "  Occurance > 1 ("+occurance+") -> need removing"
-				
-				'Without the speed up, we jump to the last item of the list:
-				'	op=count
-				'	node=currList.LastNode() 'loosing the last node mark, we need to update it
-				'	Because MakeUniqueType is integrated, we can use instead:
-				'	node=_head._pred 'that avoids to check
-				'
-				'With the speed up, we stick the head to the last duplicate found:
-				op=count-lastCnt
-				node=lastHead
-				
-				Print "  -> Head to: "+node.Value+" on the "+op+"th item"
-
-				Repeat
-
-					'same than above, we need to compare the node's value, where T could be from any type
-					If node.Value=nodeItem.Value
-						Print "  -> Found a match on the "+op+"th item"
-						node=node.Pred
-						occurance-=1
-						Print "  -> Now head over: "+node.Value
-						Print "  -> Removed: "+node.Succ.Value+", new occurance: "+occurance
-						node.Succ.Remove()
-						actCount-=1
-						op-=1
-						lp-=1
-					End 
-
-					node=node.Pred
-					op-=1
-
-				Until op=1 Or occurance=1 'Stop without checking the whole list if we know it was the last one
-
-			End 
-
-			nodeItem=nodeItem.Succ
-
-		lp-=1
-		Until lp=0
-
 		Return currList
 	End
 End 
 
 Class CustomItem
-	' Special custom type for the verbose MakeUniqueType
+	' Special custom type for the tests
 	Field _label:String 
 	Method New(label:String)
 		_label=label
@@ -149,18 +59,27 @@ End
 Class ListAddTests
 
 	Method TestAll()
-		Print("===== List Add Operations Unit Tests =====")
+		Print("~n===============================")
+		Print("Testing Union operation...")
+		Print("===============================")
 		
 		TestAppend()
 		TestUnion()
 		TestIntersect()
 		TestDiff()
-		TestMakeUnique()
+		TestDedup()
+		
+		TestStressDedup()
+		StressTestAppend()
+		StressTestUnion()
+		StressTestIntersect()
+		StressTestDiff()
 		
 		Print("===== All Tests Complete =====")
 	End
 	
 	Method TestAppend()
+
 		Print("~n-------------------------------")
 		Print("Testing Append operation...")
 		Print("-------------------------------")
@@ -349,7 +268,7 @@ Class ListAddTests
 	
 	Method TestIntersect()
 		Print("~n-------------------------------")
-		Print("Testing IntersectKey operation...")
+		Print("Testing Intersect operation...")
 		Print("-------------------------------")
 		
 		Print("~n----------------- Case 1: Overlapping lists")
@@ -378,9 +297,9 @@ Class ListAddTests
 		Print("~n----------------- Copy variant")
 
 		' 
-		Local result:= list1.Intersect(list2, False)
+		Local result:=list2.Intersect(list1, False)
 		Print "Print Result"
-		For Local n:=Eachin result 
+		For Local n:=Eachin result
 			Print n
 		Next 		
 		Assert(result.Count() = 2)
@@ -402,14 +321,14 @@ Class ListAddTests
 		Next 
 		
 		Print("~n-----------------")
-		Print("IntersectKey tests passed!")
+		Print("Intersect tests passed!")
 		Print("-----------------")
 	
 	End
 
 	Method TestDiff()
 		Print("~n-------------------------------")
-		Print("Testing DiffKey operation...")
+		Print("Testing Diff operation...")
 		Print("-------------------------------")
 		
 		Print("----------------- Case 1: Overlapping lists")
@@ -462,14 +381,14 @@ Class ListAddTests
 		Next 
 		
 		Print("~n-----------------")
-		Print("DiffKey tests passed!")
+		Print("Diff tests passed!")
 		Print("-----------------")
 	End
 	
-	Method TestMakeUnique()
+	Method TestDedup()
 
 		Print("~n-------------------------------")
-		Print("Testing MakeUnique operation...")
+		Print("Testing Dedup operation...")
 		Print("-------------------------------")
 		
 		Print("~n----------------- Long list")
@@ -491,23 +410,15 @@ Class ListAddTests
 		For Local n:=Eachin list1
 			Print n
 		Next
-		Local uniqueItemList:=list1.MakeUnique(False)
-		'Expected list:
-		Assert(uniqueItemList.FindNode("apple"))
-		Assert(uniqueItemList.FindNode("banana"))
-		Assert(uniqueItemList.FindNode("cherry"))
-		Assert(uniqueItemList.FindNode("juice"))
-		Assert(uniqueItemList.FindNode("date"))
-		Assert(uniqueItemList.FindNode("orange"))
-		Assert(uniqueItemList.FindNode("blackberry"))
+		'list1.Dedup_oldImplementation(False)
+		list1.Dedup()
 		Print("~n-----------------")
-		Print "List1 after MakeUnique (keep the original order)"
+		Print("List1 after Dedup")
 		Print("-----------------")
-		For Local n:=Eachin uniqueItemList
+		For Local n:=Eachin list1
 			Print n
 		Next
-		list1.MakeUniqueFast()
-'		'Expected list:
+		'Expected list:
 		Assert(list1.FindNode("apple"))
 		Assert(list1.FindNode("banana"))
 		Assert(list1.FindNode("cherry"))
@@ -515,15 +426,8 @@ Class ListAddTests
 		Assert(list1.FindNode("date"))
 		Assert(list1.FindNode("orange"))
 		Assert(list1.FindNode("blackberry"))
-		Print("~n-----------------")
-		Print "List1 after MakeUnique (do not keep the original order)"
-		Print("-----------------")
-		For Local n:=Eachin list1
-			Print n
-		Next
 
 		Print("~n----------------- Custom Type list")
-		Print("The custom type MakeUnique can threat any custom datatype (object)")
 	
 		Local banana:=New CustomItem("banana")
 		Local date:=New CustomItem("date")
@@ -531,40 +435,211 @@ Class ListAddTests
 		Local orange:=New CustomItem("orange")
 		Local blackberry:=New CustomItem("blackberry")
 	
-		Local list2:=New List<CustomItem>()
-		list2.Add(banana)
-		list2.Add(date)
-		list2.Add(apple)
-		list2.Add(banana)
-		list2.Add(banana)
-		list2.Add(orange)
-		list2.Add(date)
-		list2.Add(blackberry)
-		list2.Add(blackberry)
-		list2.Add(blackberry)
+		Local list3:=New List<CustomItem>()
+		list3.Add(banana)
+		list3.Add(date)
+		list3.Add(apple)
+		list3.Add(banana)
+		list3.Add(banana)
+		list3.Add(orange)
+		list3.Add(date)
+		list3.Add(blackberry)
+		list3.Add(blackberry)
+		list3.Add(blackberry)
 		
-		Print("~n-------- list1 before MakeUnique:")
+		Print("~n-------- list1 before Dedup")
 	
-		For Local n:=Eachin list2
+		For Local n:=Eachin list3
 			Print n
 		Next
 		
-		Print("~n-------- MakeUnique process with custom type in list1:")
-		Print("we will use a special verbose version for debugging purpose...")
-		list2.MakeUniqueTypeVerbose()
-	'	list2.MakeUniqueType()
+		Print("~n-------- Dedup process with custom type in list1:")
+		list3.Dedup()
 	
-		Print("~n-------- list1 after MakeUnique:")
+		Print("~n-------- list1 after Dedup:")
 	
-		For Local n:=Eachin list2
+		For Local n:=Eachin list3
 			Print n
 		Next
 		
 		Print("~n-----------------")
-		Print("MakeUnique tests passed!")
+		Print("Dedup tests passed!")
 		Print("-----------------")
 	End 
+
+	' ===================================================== Stress Tests
+
+	Method TestStressDedup()
+		Print("~n===== Stress Testing Dedup =====")
+		
+		Print("~n----------------- Dedup")
+		
+		Local sizes:Int[] = New Int[](1000, 10000, 100000)
+		Local dupeRates:Float[] = New Float[](0.25, 0.5, 0.75)
+		
+		For Local size:= Eachin sizes
+			For Local dupeRate:= Eachin dupeRates
+				Local list:= Bencher.GenerateDuplicateStrings(size, dupeRate)
+				Local count:Int = list.Count()
+				
+				Local startTime:Int = Millisecs()
+				list.Dedup()
+				'list.Dedup_oldImplementation()
+				Local duration:Int = Millisecs() - startTime
+				
+				Print("Dedup: size=" + size + ", dupe=" + dupeRate + ", time=" + duration + "ms, reduction=" + (count - list.Count()))
+			End
+		End
+		Print("===== Dedup Stress Test Complete =====")
+	End
+
+	' Stress test for Append operation
+	Method StressTestAppend:Void()
+		Print("~n===== Stress Testing Append =====")
+		
+		' Test with various list sizes and duplication rates
+		For Local size:= EachIn New Int[](1000, 10000, 100000)
+			For Local dupeRate:= EachIn New Float[](0.25, 0.5, 0.75)
+				Local list1:= Bencher.GenerateDuplicateStrings(size, dupeRate)
+				Local list2:= Bencher.GenerateDuplicateStrings(size/10, dupeRate) ' Smaller second list
+
+				Local startTime:Int = Millisecs()
+				list1.Append(list2, True)		
+				Local duration:Int = Millisecs() - startTime
+
+				Local throughput:=Bencher.CalculateElementsPerSecond(size, duration)
+				Print("Append: size=" + size + ", dupe=" + dupeRate + ", time=" + duration + "ms, throughput=" + Bencher.FormatThroughput(throughput, True))
+			Next
+		Next
+		
+		Print("===== Append Stress Test Complete =====")
+	End
+	
+	' Stress test for Union operation
+	Method StressTestUnion:Void()
+		Print("~n===== Stress Testing Union =====")
+		
+		' Test with various list sizes and duplication rates
+		For Local size:= EachIn New Int[](1000, 10000, 100000)
+			For Local dupeRate:= EachIn New Float[](0.25, 0.5, 0.75)
+				Local list1:= Bencher.GenerateDuplicateStrings(size, dupeRate)
+				Local list2:= Bencher.GenerateDuplicateStrings(size/10, dupeRate) ' Smaller second list
+
+				Local startTime:Int = Millisecs()
+				list1.Union(list2, True)
+				Local duration:Int = Millisecs() - startTime	
+
+				Local throughput:=Bencher.CalculateElementsPerSecond(size, duration)
+				Print("Union: size=" + size + ", dupe=" + dupeRate + ", time=" + duration + "ms, throughput=" + Bencher.FormatThroughput(throughput, True))
+			Next
+		Next
+		
+		Print("===== Union Stress Test Complete =====")
+	End
+	
+	' Stress test for Intersect operation
+	Method StressTestIntersect:Void()
+		Print("~n===== Stress Testing Intersect =====")
+		
+		' Test with various list sizes and duplication rates
+		For Local size:= EachIn New Int[](1000, 10000, 100000)
+			For Local dupeRate:= EachIn New Float[](0.25, 0.5, 0.75)
+				Local list1:= Bencher.GenerateDuplicateStrings(size, dupeRate)
+				' Create second list with some overlap for meaningful intersection
+				Local list2:= New List<String>
+				For Local i:=0 Until size/5
+					list2.AddLast("Item"+String(i Mod (size/10)))
+				Next
+				
+				Local startTime:Int = Millisecs()
+				list1.Intersect(list2, True)
+				Local duration:Int = Millisecs() - startTime
+
+				Local throughput:=Bencher.CalculateElementsPerSecond(size, duration)
+				Print("Intersect: size=" + size + ", dupe=" + dupeRate + ", time=" + duration + "ms, throughput=" + Bencher.FormatThroughput(throughput, True))			
+			Next
+		Next
+		
+		Print("===== Intersect Stress Test Complete =====")
+	End
+	
+	' Stress test for Diff operation
+	Method StressTestDiff:Void()
+		Print("~n===== Stress Testing Diff =====")
+		
+		' Test with various list sizes and duplication rates
+		For Local size:= EachIn New Int[](1000, 10000, 100000)
+			For Local dupeRate:= EachIn New Float[](0.25, 0.5, 0.75)
+				Local list1:= Bencher.GenerateDuplicateStrings(size, dupeRate)
+				' Create second list with some overlap
+				Local list2:= New List<String>
+				For Local i:=0 Until size/5
+					list2.AddLast("Item"+String(i Mod (size/10)))
+				Next
+
+				Local startTime:Int = Millisecs()
+				list1.Diff(list2, True)
+				Local duration:Int = Millisecs() - startTime
+				
+				Local throughput:=Bencher.CalculateElementsPerSecond(size, duration)
+				Print("Diff: size=" + size + ", dupe=" + dupeRate + ", time=" + duration + "ms, throughput=" + Bencher.FormatThroughput(throughput, True))				
+			Next
+		Next
+		
+		Print("===== Diff Stress Test Complete =====")
+	End
+
 End
+
+Class Bencher 
+	
+	Function CalculateElementsPerSecond:Float(elementCount:Int, timeMs:Int)
+		' Guard against division by zero
+		If timeMs = 0 Then Return 0.0
+		
+		' Convert milliseconds to seconds for calculation
+		Local timeSeconds:Float = timeMs / 1000.0
+		
+		' Calculate elements per second
+		Local elementsPerSecond:Float = elementCount / timeSeconds
+		
+		Return elementsPerSecond
+	End
+	
+	Function FormatThroughput:String(elementsPerSecond:Float, roundToThousands:Bool = True)
+		If roundToThousands
+			' Round to nearest thousand
+			Local rounded:Int = Int(elementsPerSecond / 1000.0) * 1000
+			Return rounded + " elements/second"
+		Else
+			' Format with comma separators
+			Return Int(elementsPerSecond) + " elements/second" 
+		Endif
+	End
+	
+	Function GenerateDuplicateStrings:List<String>(size:Int, dupeRate:Float)
+		' Create list with controlled duplication rate
+		Local list:= New List<String>
+		
+		' Calculate how many unique values we need
+		Local uniqueCount:Int = Int(size * (1.0 - dupeRate))
+		If uniqueCount < 1 Then uniqueCount = 1
+		
+		' Generate unique values
+		For Local i:Int = 0 Until uniqueCount
+			list.AddLast("UniqueValue" + i)
+		Next
+		
+		' Fill remaining slots with duplicates
+		While list.Count() < size
+			' Pick random existing item to duplicate
+			Local index:Int = Rnd(1, uniqueCount)
+			list.AddLast(index)
+		Wend
+		
+		Return list
+	End
+End 
 
 Function Main()
 	Local tests:= New ListAddTests
