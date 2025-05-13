@@ -40,6 +40,11 @@ Using stdlib.collections..
 Using stdlib.system.time..
 Using stdlib.math.random..
 
+'Note: if you want test with Wonkey, comment the #Import command and the Using and uncomment these following lines:
+
+'#Import "<std>"
+'Using std..
+
 Class List<T> Extension
 
 	Method Dedup_oldImplementation:List<T>(onPlace:Bool=True)
@@ -512,7 +517,7 @@ Class ListAddTests
 	Method TestStressDedup()
 		Print("~n===== Stress Testing =====")
 		
-		Print("~n===== Stress Testing Append =====")
+		Print("~n===== Stress Testing Dedup =====")
 		
 		Local sizes:Int[] = New Int[](1000, 10000, 100000)
 		Local dupeRates:Float[] = New Float[](0.25, 0.5, 0.75)
