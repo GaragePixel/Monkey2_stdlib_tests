@@ -67,7 +67,7 @@ Class List<T> Extension
 		Local atLeastTwo:=currList.HasOneOrTwo
 		If atLeastTwo=1 Return currList
 		
-		Local firstNode:List<T>.Node=currList.FirstNode()
+		Local firstNode:List<T>.Node=currList.FirstNode
 
 		If atLeastTwo=2
 			If firstNode.Value=firstNode.Succ.Value
