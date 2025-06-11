@@ -24,7 +24,7 @@ Function Main()
 			Return
 		Endif
 		
-		If libc.memcmp( data.Data,data2.Data,data.Length )
+		If stdlib.plugins.libc.memcmp( data.Data,data2.Data,data.Length )
 			Print "Failed: Different data!"
 			Return
 		Endif
